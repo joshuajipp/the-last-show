@@ -3,6 +3,7 @@ import time
 import requests
 from requests_toolbelt.multipart import decoder
 import base64
+import hashlib
 
 
 def lambda_handler(event, context):
@@ -52,3 +53,28 @@ def create_mp3(text):
         TextType='text',
         VoiceId='Joanna'
     )
+
+
+def create_signature(body, api_secret):
+    exclude = ["api_key", "resource_type", "cloud_name"]
+    timestamp = int(time.time())
+    body["timestamp"] = timestamp
+    sorted_body = sort_dict(body, exclude)
+    query_string = create_query_string(sorted_body)
+    query_string_append = f"{query_string}{api_secret}"
+    hashed = hashlib.sha1(query_string_append.encode())
+    return hashed.hexdigest()
+
+
+def sort_dict(dict, exclude):
+    myKeys = list(dict.keys())
+    myKeys.sort()
+    for i in range(len(exclude)):
+        myKeys.remove(exclude[i])
+    return {i: dict[i] for i in myKeys}
+
+
+def create_query_string(dict):
+    query_string = ""
+    for ind, (key, value) in enumerate(dict.items()):
+        query_string = f"{key}{value}" if ind == 0 else f"{query_string}&{key}={value}"
