@@ -1,10 +1,25 @@
 import boto3
 import time
 import requests
+from requests_toolbelt.multipart import decoder
+import base64
 
 
-def lambda_handler():
-    pass
+def lambda_handler(event, context):
+    body = event("body")
+
+    if event["isBase64Encoded"]:
+        body = base64.b64decode(body)
+
+    content_type = event["headers"]["content-type"]
+    data = decoder.MultipartDecoder(body, content_type)
+
+    binary_data = [parts.content for parts in data.parts]
+
+    file_name = "obituary.png"
+    with open(file_name, "wb") as f:
+        f.write(binary_data[0])
+    post_cloudinary(file_name)
 
 
 def post_cloudinary(filename, resource_type="image", extra_fields={}):
