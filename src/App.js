@@ -1,8 +1,13 @@
 import React from "react";
 import Header from "./components/Header";
+import Obituary from "./components/Obituary";
 function App() {
   return(
-    <Header />
+    <div>
+      <Header />
+      <Obituary />
+    </div>
+    
   )
 }
 
