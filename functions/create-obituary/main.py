@@ -9,7 +9,7 @@ import json
 
 
 def lambda_handler(event, context):
-    body = event("body")
+    body = event["body"]
 
     if event["isBase64Encoded"]:
         body = base64.b64decode(body)
@@ -87,5 +87,28 @@ def create_query_string(dict):
     return query_string
 
 
+def write_obituary(name, birth_year, death_year):
+    url = "https://api.openai.com/v1/completions"
+    api_key = ""
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}"
+    }
+
+    body = {
+        "model": "text-curie-001",
+        "prompt": f"write an obituary about a fictional character \
+            named {name} who was born on {birth_year} and died on {death_year}",
+        "max_tokens": 600,
+        "temperature": 0.1,
+    }
+
+    res = requests.post(url, headers=headers, json=body)
+    return res.json()
+
+
 # print(post_cloudinary("gru.jpg"))
-print(create_mp3("Hello, my name is Gru. I love minions.")['secure_url'])
+# print(create_mp3("Hello, my name is Gru. I love minions.")['secure_url'])
+print(write_obituary("Wolfgang Amadeus Mozart",
+      "02-01-1990", "05-10-2020")["choices"][0]["text"])
