@@ -1,4 +1,4 @@
-function Headers(){
+function Header(props){
     return(
         <nav>
             <div className = "header">
@@ -7,9 +7,9 @@ function Headers(){
                 </div>
             </div>
             <div className = "menu-button">
-                <button className = "button">+ New Obituary</button>
+                <button className = "button" onClick={props.toggleModal}>+ New Obituary</button>
             </div>
         </nav>
     )
 }
-export default Headers;
+export default Header;

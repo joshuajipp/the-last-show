@@ -2,9 +2,9 @@ function Obituary(){
     return(
     <div className="obituary">
         <div className = "obituary-box">
-            <p>image will go here</p>
+            <img src="https://res.cloudinary.com/denlhhzsi/image/upload/v1675198404/sample.jpg" alt="Random" className="squared" />
             <div className = "obituary-text">
-                <p>Kevin Minion</p>
+                <p>Name</p>
                 <p> Date</p>
                 <p>chatGPT text</p>
             </div>
