@@ -4,6 +4,8 @@ import requests
 from requests_toolbelt.multipart import decoder
 import base64
 import hashlib
+import hmac
+import json
 
 
 def lambda_handler(event, context):
@@ -30,16 +32,16 @@ def post_cloudinary(filename, resource_type="image", extra_fields={}):
 
     body = {
         "api_key": api_key,
-        "timestamp": int(time.time())
+        "timestamp": str(int(time.time()))
     }
     files = {
         "file": open(filename, "rb")
     }
-    timestamp = int(time.time())
+
     body["signature"] = create_signature(body, api_secret)
 
     url = f"https://api.cloudinary.com/v1_1/{cloud_name}/{resource_type}/upload"
-    res = requests.post(url, data=body, files=files)
+    res = requests.post(url, files=files, data=body)
     return res.json()
 
 
@@ -57,24 +59,28 @@ def create_mp3(text):
 
 def create_signature(body, api_secret):
     exclude = ["api_key", "resource_type", "cloud_name"]
-    timestamp = int(time.time())
-    body["timestamp"] = timestamp
     sorted_body = sort_dict(body, exclude)
     query_string = create_query_string(sorted_body)
-    query_string_append = f"{query_string}{api_secret}"
-    hashed = hashlib.sha1(query_string_append.encode())
-    return hashed.hexdigest()
+    query_string = f"{query_string}{api_secret}"
+    hashed = hashlib.sha1(query_string.encode("utf-8")).hexdigest()
+    return hashed
 
 
 def sort_dict(dict, exclude):
     myKeys = list(dict.keys())
     myKeys.sort()
     for i in range(len(exclude)):
-        myKeys.remove(exclude[i])
+        if exclude[i] in myKeys:
+            myKeys.remove(exclude[i])
+
     return {i: dict[i] for i in myKeys}
 
 
 def create_query_string(dict):
     query_string = ""
     for ind, (key, value) in enumerate(dict.items()):
-        query_string = f"{key}{value}" if ind == 0 else f"{query_string}&{key}={value}"
+        query_string = f"{key}={value}" if ind == 0 else f"{query_string}&{key}={value}"
+    return query_string
+
+
+print(post_cloudinary("gru.jpg"))
