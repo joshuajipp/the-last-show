@@ -55,6 +55,10 @@ def create_mp3(text):
         TextType='text',
         VoiceId='Joanna'
     )
+    filename = "obituary.mp3"
+    with open(filename, "wb") as f:
+        f.write(response["AudioStream"].read())
+    return post_cloudinary(filename, "raw")
 
 
 def create_signature(body, api_secret):
@@ -83,4 +87,5 @@ def create_query_string(dict):
     return query_string
 
 
-print(post_cloudinary("gru.jpg"))
+# print(post_cloudinary("gru.jpg"))
+print(create_mp3("Hello, my name is Gru. I love minions.")['secure_url'])
