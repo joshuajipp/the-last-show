@@ -29,3 +29,35 @@ data "archive_file" "lambda_get_obituaries" {
   source_dir  = "../functions/get-obituaries"
   output_path = "./get-obituaries.zip"
 } 
+
+resource "aws_iam_role" "lambda_save" {
+  name               = "iam-role-lambda-obituaries"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+resource "aws_lambda_function" "create_obituary_lambda" {
+  filename         = "./create-obituary.zip"
+  function_name    = "create-obituary-30144999"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "main.handler"
+  runtime          = "python3.9"
+}
+
+resource "aws_lambda_function" "get_obituaries_lambda" {
+  filename         = "./get-obituaries.zip"
+  function_name    = "get-obituaries-30144999"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "main.handler"
+  runtime          = "python3.9"
+}
