@@ -4,25 +4,30 @@ import requests
 from requests_toolbelt.multipart import decoder
 import base64
 import hashlib
-import hmac
-import json
 
 
 def lambda_handler(event, context):
     body = event["body"]
+    base64_image = body["image"]
+    image_bytes = base64.b64decode(base64_image)
+    filename = "obituary.png"
 
-    if event["isBase64Encoded"]:
-        body = base64.b64decode(body)
+    with open(filename, "wb") as f:
+        f.write(image_bytes)
 
-    content_type = event["headers"]["content-type"]
-    data = decoder.MultipartDecoder(body, content_type)
-
-    binary_data = [parts.content for parts in data.parts]
-
-    file_name = "obituary.png"
-    with open(file_name, "wb") as f:
-        f.write(binary_data[0])
-    post_cloudinary(file_name)
+    image_url = post_cloudinary(filename)['secure_url']
+    generated_text = write_obituary(
+        body["name"], body["birth_year"], body["death_year"])["choices"][0]["text"]
+    mp3_url = create_mp3(generated_text)['secure_url']
+    items = {
+        "image_url": image_url,
+        "text": generated_text,
+        "mp3_url": mp3_url,
+        "name": body["name"],
+        "birth_year": body["birth_year"],
+        "death_year": body["death_year"]
+    }
+    return items
 
 
 def post_cloudinary(filename, resource_type="image", extra_fields={}):
