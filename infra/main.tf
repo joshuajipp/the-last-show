@@ -76,7 +76,7 @@ resource "aws_dynamodb_table" "obituaries_dynamodb_table" {
 
   # the hash_key data type is string
   attribute {
-    name = "email"
+    name = "image_url"
     type = "S"
   }
 
@@ -104,7 +104,7 @@ resource "aws_iam_role_policy_attachment" "parameter_store_policy_attachment" {
   role       = aws_iam_role.lambda_role.name
 }
 resource "aws_iam_policy" "dynamodb_policy" {
-  name        = "dynamodb-policy"
+  name        = "dynamodb-policy-the-last-show"
   policy      = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -148,7 +148,7 @@ resource "aws_lambda_function_url" "url_create_obituary" {
 }
 
 resource "aws_lambda_function_url" "url_get_obituaries" {
-  function_name      = aws_lambda_function.create_obituary_lambda.function_name
+  function_name      = aws_lambda_function.get_obituaries_lambda.function_name
   authorization_type = "NONE"
 
   cors {
