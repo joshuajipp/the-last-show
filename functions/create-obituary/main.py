@@ -27,6 +27,9 @@ def handler(event, context):
         "birth_year": body["birth_year"],
         "death_year": body["death_year"]
     }
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('the-last-show-30160521')
+    table.put_item(Item=items)
     return items
 
 
