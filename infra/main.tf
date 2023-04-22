@@ -52,6 +52,7 @@ resource "aws_lambda_function" "create_obituary_lambda" {
   role             = aws_iam_role.lambda_role.arn
   handler          = "main.handler"
   runtime          = "python3.9"
+  timeout = 300
   source_code_hash = filebase64sha256("./create-obituary.zip")
 }
 
@@ -61,6 +62,7 @@ resource "aws_lambda_function" "get_obituaries_lambda" {
   role             = aws_iam_role.lambda_role.arn
   handler          = "main.handler"
   runtime          = "python3.9"
+  timeout = 300
   source_code_hash = filebase64sha256("./get-obituaries.zip")
 }
 
@@ -101,8 +103,32 @@ resource "aws_iam_policy" "parameter_store_policy" {
   })
 }
 
+resource "aws_iam_policy" "polly_access_policy" {
+  name        = "PollyAccessPolicy"
+  description = "Allows access to Polly's SynthesizeSpeech action"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "polly:SynthesizeSpeech"
+        ]
+        Resource = ["*"]
+      }
+    ]
+  })
+}
+
+
 resource "aws_iam_role_policy_attachment" "parameter_store_policy_attachment" {
   policy_arn = aws_iam_policy.parameter_store_policy.arn
+  role       = aws_iam_role.lambda_role.name
+}
+
+resource "aws_iam_role_policy_attachment" "polly_access_policy_attachment" {
+  policy_arn = aws_iam_policy.polly_access_policy.arn
   role       = aws_iam_role.lambda_role.name
 }
 resource "aws_iam_policy" "dynamodb_policy" {
