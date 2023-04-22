@@ -1,41 +1,71 @@
 import boto3
 import time
 import requests
-from requests_toolbelt.multipart import decoder
 import base64
 import hashlib
+import json
+
+# try:
+#     table.put_item(Item=body)
+#     return {
+#         "statusCode": 200,
+#         "body": json.dumps({
+#             "message": "added note success"
+#         })
+#     }    try:
+#     table.put_item(Item=body)
+#     return {
+#         "statusCode": 200,
+#         "body": json.dumps({
+#             "message": "added note success"
+#         })
+#     }
 
 
 def handler(event, context):
-    body = event["body"]
-    base64_image = body["image"]
-    image_bytes = base64.b64decode(base64_image)
-    filename = "obituary.png"
+    try:
+        body = event["body"]
+        base64_image = body["image"]
+        image_bytes = base64.b64decode(base64_image)
+        filename = "/tmp/obituary.png"
 
-    with open(filename, "wb") as f:
-        f.write(image_bytes)
+        with open(filename, "wb") as f:
+            f.write(image_bytes)
 
-    image_url = post_cloudinary(filename)["secure_url"]
-    generated_text = write_obituary(
-        body["name"], body["birth_year"], body["death_year"])["choices"][0]["text"]
-    mp3_url = create_mp3(generated_text)['secure_url']
-    items = {
-        "image_url": image_url,
-        "text": generated_text,
-        "mp3_url": mp3_url,
-        "name": body["name"],
-        "birth_year": body["birth_year"],
-        "death_year": body["death_year"]
-    }
-    dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table('the-last-show-30160521')
-    table.put_item(Item=items)
-    return items
+        image_url = post_cloudinary(filename)["secure_url"]
+        generated_text = (write_obituary(
+            body["name"], body["birth_year"], body["death_year"])["choices"][0]["text"]).replace("\n", "")
+        mp3_url = create_mp3(generated_text)['secure_url']
+        items = {
+            "image_url": image_url,
+            "text": generated_text,
+            "mp3_url": mp3_url,
+            "name": body["name"],
+            "birth_year": body["birth_year"],
+            "death_year": body["death_year"]
+        }
+        dynamodb = boto3.resource('dynamodb')
+        table = dynamodb.Table('the-last-show-30160521')
+        table.put_item(Item=items)
+        return {
+            "statusCode": 200,
+            "body": json.dumps({
+                "message": "created obituary success"
+            })
+        }
+    except Exception as e:
+        return {
+            "statusCode": 500,
+            "body": json.dumps({
+                "message": str(e)
+            })
+        }
 
 
 def post_cloudinary(filename, resource_type="image", extra_fields={}):
     api_data_string = boto3.client('ssm').get_parameter(
-        Name="CloudinaryKey", WithDecryption=True)
+        Name="CloudinaryKey", WithDecryption=True)["Parameter"]["Value"]
+
     api_data_list = api_data_string.split(",")
 
     cloud_name = api_data_list[0]
@@ -67,7 +97,7 @@ def create_mp3(text):
         TextType='text',
         VoiceId='Joanna'
     )
-    filename = "obituary.mp3"
+    filename = "/tmp/obituary.mp3"
     with open(filename, "wb") as f:
         f.write(response["AudioStream"].read())
     return post_cloudinary(filename, "raw")
@@ -101,7 +131,7 @@ def create_query_string(dict):
 
 def write_obituary(name, birth_year, death_year):
     api_key = boto3.client('ssm').get_parameter(
-        Name="OpenAIKey", WithDecryption=True)
+        Name="OpenAIKey", WithDecryption=True)["Parameter"]["Value"]
     url = "https://api.openai.com/v1/completions"
 
     headers = {
@@ -117,5 +147,5 @@ def write_obituary(name, birth_year, death_year):
         "temperature": 0.1,
     }
 
-    res = requests.post(url, headers=headers, json=body)
+    res = requests.post(url, headers=headers, json=body, timeout=15)
     return res.json()
