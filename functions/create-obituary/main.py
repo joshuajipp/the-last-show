@@ -18,15 +18,15 @@ def handler(event, context):
 
         image_url = post_cloudinary(filename)["secure_url"]
         generated_text = (write_obituary(
-            body["name"], body["birth_year"], body["death_year"])["choices"][0]["text"]).replace("\n", "")
+            body["name"], body["birth_date"], body["death_date"])["choices"][0]["text"]).replace("\n", "")
         mp3_url = create_mp3(generated_text)['secure_url']
         items = {
             "image_url": image_url,
             "text": generated_text,
             "mp3_url": mp3_url,
             "name": body["name"],
-            "birth_year": body["birth_year"],
-            "death_year": body["death_year"]
+            "birth_date": body["birth_date"],
+            "death_date": body["death_date"]
         }
         dynamodb = boto3.resource('dynamodb')
         table = dynamodb.Table('the-last-show-30160521')
@@ -113,7 +113,7 @@ def create_query_string(dict):
     return query_string
 
 
-def write_obituary(name, birth_year, death_year):
+def write_obituary(name, birth_date, death_date):
     api_key = boto3.client('ssm').get_parameter(
         Name="OpenAIKey", WithDecryption=True)["Parameter"]["Value"]
     url = "https://api.openai.com/v1/completions"
@@ -126,7 +126,7 @@ def write_obituary(name, birth_year, death_year):
     body = {
         "model": "text-curie-001",
         "prompt": f"write an obituary about a fictional character \
-            named {name} who was born on {birth_year} and died on {death_year}",
+            named {name} who was born on {birth_date} and died on {death_date}",
         "max_tokens": 600,
         "temperature": 0.1,
     }
