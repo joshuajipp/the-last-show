@@ -52,6 +52,7 @@ resource "aws_lambda_function" "create_obituary_lambda" {
   role             = aws_iam_role.lambda_role.arn
   handler          = "main.handler"
   runtime          = "python3.9"
+  source_code_hash = filebase64sha256("./create-obituary.zip")
 }
 
 resource "aws_lambda_function" "get_obituaries_lambda" {
@@ -60,6 +61,7 @@ resource "aws_lambda_function" "get_obituaries_lambda" {
   role             = aws_iam_role.lambda_role.arn
   handler          = "main.handler"
   runtime          = "python3.9"
+  source_code_hash = filebase64sha256("./get-obituaries.zip")
 }
 
 resource "aws_dynamodb_table" "obituaries_dynamodb_table" {
