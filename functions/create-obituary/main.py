@@ -5,22 +5,6 @@ import base64
 import hashlib
 import json
 
-# try:
-#     table.put_item(Item=body)
-#     return {
-#         "statusCode": 200,
-#         "body": json.dumps({
-#             "message": "added note success"
-#         })
-#     }    try:
-#     table.put_item(Item=body)
-#     return {
-#         "statusCode": 200,
-#         "body": json.dumps({
-#             "message": "added note success"
-#         })
-#     }
-
 
 def handler(event, context):
     try:
