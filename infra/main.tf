@@ -62,6 +62,26 @@ resource "aws_lambda_function" "get_obituaries_lambda" {
   runtime          = "python3.9"
 }
 
+resource "aws_dynamodb_table" "obituaries_dynamodb_table" {
+  name         = "the-last-show-30160521"
+  billing_mode = "PROVISIONED"
+
+  # up to 8KB read per second (eventually consistent)
+  read_capacity = 1
+
+  # up to 1KB per second
+  write_capacity = 1
+
+  hash_key = "image_url"
+
+  # the hash_key data type is string
+  attribute {
+    name = "email"
+    type = "S"
+  }
+
+}
+
 resource "aws_iam_policy" "parameter_store_policy" {
   name = "parameter_store_policy"
 
