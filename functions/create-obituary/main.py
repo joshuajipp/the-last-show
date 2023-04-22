@@ -31,9 +31,13 @@ def handler(event, context):
 
 
 def post_cloudinary(filename, resource_type="image", extra_fields={}):
-    api_key = "813499744365815"
-    cloud_name = "dwviwvswa"
-    api_secret = "-Xm0_yEQ0XwUttyidG1L1QzZADI"
+    api_data_string = boto3.client('ssm').get_parameter(
+        Name="CloudinaryKey", WithDecryption=True)
+    api_data_list = api_data_string.split(",")
+
+    cloud_name = api_data_list[0]
+    api_key = api_data_list[1]
+    api_secret = api_data_list[2]
 
     body = {
         "api_key": api_key,
@@ -93,8 +97,9 @@ def create_query_string(dict):
 
 
 def write_obituary(name, birth_year, death_year):
+    api_key = boto3.client('ssm').get_parameter(
+        Name="OpenAIKey", WithDecryption=True)
     url = "https://api.openai.com/v1/completions"
-    api_key = "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"
 
     headers = {
         "Content-Type": "application/json",
