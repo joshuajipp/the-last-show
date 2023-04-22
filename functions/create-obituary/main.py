@@ -6,7 +6,7 @@ import base64
 import hashlib
 
 
-def lambda_handler(event, context):
+def handler(event, context):
     body = event["body"]
     base64_image = body["image"]
     image_bytes = base64.b64decode(base64_image)
@@ -15,7 +15,7 @@ def lambda_handler(event, context):
     with open(filename, "wb") as f:
         f.write(image_bytes)
 
-    image_url = post_cloudinary(filename)['secure_url']
+    image_url = post_cloudinary(filename)["secure_url"]
     generated_text = write_obituary(
         body["name"], body["birth_year"], body["death_year"])["choices"][0]["text"]
     mp3_url = create_mp3(generated_text)['secure_url']
@@ -33,7 +33,7 @@ def lambda_handler(event, context):
 def post_cloudinary(filename, resource_type="image", extra_fields={}):
     api_key = "813499744365815"
     cloud_name = "dwviwvswa"
-    api_secret = ""
+    api_secret = "-Xm0_yEQ0XwUttyidG1L1QzZADI"
 
     body = {
         "api_key": api_key,
@@ -94,7 +94,7 @@ def create_query_string(dict):
 
 def write_obituary(name, birth_year, death_year):
     url = "https://api.openai.com/v1/completions"
-    api_key = ""
+    api_key = "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"
 
     headers = {
         "Content-Type": "application/json",
@@ -111,9 +111,3 @@ def write_obituary(name, birth_year, death_year):
 
     res = requests.post(url, headers=headers, json=body)
     return res.json()
-
-
-# print(post_cloudinary("gru.jpg"))
-# print(create_mp3("Hello, my name is Gru. I love minions.")['secure_url'])
-print(write_obituary("Wolfgang Amadeus Mozart",
-      "02-01-1990", "05-10-2020")["choices"][0]["text"])
