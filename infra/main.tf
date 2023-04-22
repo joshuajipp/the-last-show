@@ -133,3 +133,29 @@ resource "aws_iam_role_policy_attachment" "dynamodb_policy_attachment" {
   policy_arn = aws_iam_policy.dynamodb_policy.arn
   role       = aws_iam_role.lambda_role.name
 }
+
+resource "aws_lambda_function_url" "url_create_obituary" {
+  function_name      = aws_lambda_function.create_obituary_lambda.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["POST"]
+    allow_headers     = ["*"]
+    expose_headers    = ["keep-alive", "date"]
+  }
+}
+
+resource "aws_lambda_function_url" "url_get_obituaries" {
+  function_name      = aws_lambda_function.create_obituary_lambda.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["GET"]
+    allow_headers     = ["*"]
+    expose_headers    = ["keep-alive", "date"]
+  }
+}
