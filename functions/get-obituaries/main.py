@@ -1,1 +1,2 @@
-# add your get-obituaries function here
+def handler(event, context):
+    pass
