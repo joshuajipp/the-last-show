@@ -30,7 +30,7 @@ data "archive_file" "lambda_get_obituaries" {
   output_path = "./get-obituaries.zip"
 } 
 
-resource "aws_iam_role" "lambda_save" {
+resource "aws_iam_role" "lambda_role" {
   name               = "iam-role-lambda-obituaries"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -60,4 +60,26 @@ resource "aws_lambda_function" "get_obituaries_lambda" {
   role             = aws_iam_role.lambda_role.arn
   handler          = "main.handler"
   runtime          = "python3.9"
+}
+
+resource "aws_iam_policy" "parameter_store_policy" {
+  name = "parameter_store_policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ssm:GetParameter"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "parameter_store_policy_attachment" {
+  policy_arn = aws_iam_policy.parameter_store_policy.arn
+  role       = aws_iam_role.lambda_role.name
 }
