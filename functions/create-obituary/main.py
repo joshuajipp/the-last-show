@@ -9,6 +9,8 @@ import json
 def handler(event, context):
     try:
         body = event["body"]
+        if type(event["body"]) == str:
+            body = json.loads(body)
         base64_image = body["image"]
         image_bytes = base64.b64decode(base64_image)
         filename = "/tmp/obituary.png"
