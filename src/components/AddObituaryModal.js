@@ -1,16 +1,21 @@
 import {useState} from "react";
+import { v4 as uuidv4 } from "uuid";
 
 function AddObituaryModal(props) {
     const[name,setName] = useState("");
-    const[when, setWhen] = useState({
-        born: "",
-        died: "",
-    })
+    const[birth, setBirth] = useState("");
+    const[death, setDeath] = useState("");
     const[file,setFile] = useState(null);
 
     const newObituary= (e) => {
         e.preventDefault();
-        props.onNew(name,when,file);
+        const obituaryObject = {
+            name: name,
+            birth: birth,
+            death:death,
+            image: file,
+        };
+        props.onNew(obituaryObject);
  
         // const data = new FormData();
         // data.append(file);
@@ -20,12 +25,11 @@ function AddObituaryModal(props) {
     const onFileChange = (e) => {
         setFile(e.target.files[0]);
     }
-    const onDateChange =(e) => {
-        const{name, value} = e.target;
-        setWhen(prevState => ({
-            ...prevState,
-            [name]:value
-        }));
+    const onBirthChange =(e) => {
+        setBirth(e.target.value)
+    };
+    const onDeathChange =(e) => {
+        setDeath(e.target.value)
     };
     return(
         <div>
@@ -41,6 +45,7 @@ function AddObituaryModal(props) {
                         </div>
                         <div className="name-input">
                         <input className = "name"
+                            required
                             type = "text"
                             value={name}
                             onChange={(e)=> setName(e.target.value)}
@@ -50,17 +55,15 @@ function AddObituaryModal(props) {
                         <div className = "date-input">
                             <small>Born:</small>
                             <input  className = "date"
-                            name="born"
-                            onChange={onDateChange}
-                            value = {when.born}
-                            type ="datetime-local"
+                            onChange={onBirthChange}
+                            value = {birth}
+                            type ="date"
                             />
                             <small> Died:</small>
                             <input className = "date"
-                            name="died"
-                            value = {when.died}
-                            onChange={onDateChange}
-                            type="datetime-local"
+                            value = {death}
+                            onChange={onDeathChange}
+                            type="date"
                             />
                         </div>
                         <div className = "Obituary-button">

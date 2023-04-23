@@ -5,6 +5,8 @@ import AddObituaryModal from "./components/AddObituaryModal";
 import {useState} from "react";
 
 function App() {
+
+  const [obituaries, setObituaries] = useState([]);
   const [showModal,setShowModal] = useState(false);
   function openModal() {
     setShowModal(true);
@@ -12,11 +14,24 @@ function App() {
   function closeModal() {
     setShowModal(false);
   }
+  function newObituary(newObituary){
+    setObituaries(prevObituaries => {
+      return [...prevObituaries, newObituary];
+    })
+  }
   return(
     <div>
       <Header toggleModal={openModal} />
-      <Obituary />
-      <AddObituaryModal showModal={showModal} setShowModal= {setShowModal} closeModal={closeModal}/>
+      {obituaries.map((obituaryItem) => 
+      <Obituary
+        image = {obituaryItem.image}
+        name = {obituaryItem.name}
+        birth = {obituaryItem.birth}
+        death = {obituaryItem.death}
+        content = {obituaryItem.content}
+        />
+      )}
+      <AddObituaryModal onNew ={newObituary} showModal={showModal} setShowModal= {setShowModal} closeModal={closeModal}/>
     </div>
     
   )

@@ -1,15 +1,13 @@
-function Obituary(){
+function Obituary(props){
     return(
     <div className="obituary">
         <div className = "obituary-box">
-            <img src="https://res.cloudinary.com/denlhhzsi/image/upload/v1675198404/sample.jpg" alt="Random" className="squared" />
+            <img src={props.image} alt={props.name} className="squared" />
             <div className = "obituary-text">
-                <p>Name</p>
-                <p> Date</p>
-                <p>chatGPT text</p>
+                <p>{props.name}</p>
+                <small>{props.birth}-{props.death}</small>
+                <p className ="content">{props.content}</p>
             </div>
-            
-
         </div>
     </div>
     )

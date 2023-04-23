@@ -1,6 +1,7 @@
 function Header(props){
     return(
         <nav>
+            <div className="empty"> </div>
             <div className = "header">
                 <div className = "title">
                     <h1>The Last Show </h1>
