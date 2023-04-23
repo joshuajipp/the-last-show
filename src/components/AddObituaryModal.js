@@ -3,17 +3,18 @@ import { v4 as uuidv4 } from "uuid";
 
 function AddObituaryModal(props) {
     const[name,setName] = useState("");
-    const[birth, setBirth] = useState("");
-    const[death, setDeath] = useState("");
-    const[file,setFile] = useState(null);
+    const[birth_date, setBirth] = useState("");
+    const[death_date, setDeath] = useState("");
+    const[image,setImage] = useState(null);
 
     const newObituary= (e) => {
         e.preventDefault();
         const obituaryObject = {
+            image: image,
             name: name,
-            birth: birth,
-            death:death,
-            image: file,
+            birth_date: birth_date,
+            death_date: death_date,
+           
         };
         props.onNew(obituaryObject);
  
@@ -23,7 +24,15 @@ function AddObituaryModal(props) {
         // data.append(when);
     }
     const onFileChange = (e) => {
-        setFile(e.target.files[0]);
+        const selectedFile = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = () => {
+            const base64Image = reader.result.split(",")[1];
+            setImage(base64Image) // This is the Base64-encoded image data
+          };
+          reader.readAsDataURL(selectedFile);
+
+
     }
     const onBirthChange =(e) => {
         setBirth(e.target.value)
@@ -56,12 +65,12 @@ function AddObituaryModal(props) {
                             <small>Born:</small>
                             <input  className = "date"
                             onChange={onBirthChange}
-                            value = {birth}
+                            value = {birth_date}
                             type ="date"
                             />
                             <small> Died:</small>
                             <input className = "date"
-                            value = {death}
+                            value = {death_date}
                             onChange={onDeathChange}
                             type="date"
                             />
