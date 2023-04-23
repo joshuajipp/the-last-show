@@ -1,45 +1,73 @@
 import boto3
 import time
 import requests
-from requests_toolbelt.multipart import decoder
 import base64
 import hashlib
+import json
 
 
-def lambda_handler(event, context):
-    body = event("body")
+def handler(event, context):
+    try:
+        body = event["body"]
+        base64_image = body["image"]
+        image_bytes = base64.b64decode(base64_image)
+        filename = "/tmp/obituary.png"
 
-    if event["isBase64Encoded"]:
-        body = base64.b64decode(body)
+        with open(filename, "wb") as f:
+            f.write(image_bytes)
 
-    content_type = event["headers"]["content-type"]
-    data = decoder.MultipartDecoder(body, content_type)
-
-    binary_data = [parts.content for parts in data.parts]
-
-    file_name = "obituary.png"
-    with open(file_name, "wb") as f:
-        f.write(binary_data[0])
-    post_cloudinary(file_name)
+        image_url = post_cloudinary(filename)["secure_url"]
+        generated_text = (write_obituary(
+            body["name"], body["birth_date"], body["death_date"])["choices"][0]["text"]).replace("\n", "")
+        mp3_url = create_mp3(generated_text)['secure_url']
+        items = {
+            "image_url": image_url,
+            "text": generated_text,
+            "mp3_url": mp3_url,
+            "name": body["name"],
+            "birth_date": body["birth_date"],
+            "death_date": body["death_date"]
+        }
+        dynamodb = boto3.resource('dynamodb')
+        table = dynamodb.Table('the-last-show-30160521')
+        table.put_item(Item=items)
+        return {
+            "statusCode": 200,
+            "body": json.dumps({
+                "message": "created obituary success"
+            })
+        }
+    except Exception as e:
+        return {
+            "statusCode": 500,
+            "body": json.dumps({
+                "message": str(e)
+            })
+        }
 
 
 def post_cloudinary(filename, resource_type="image", extra_fields={}):
-    api_key = "813499744365815"
-    cloud_name = "dwviwvswa"
-    api_secret = ""
+    api_data_string = boto3.client('ssm').get_parameter(
+        Name="CloudinaryKey", WithDecryption=True)["Parameter"]["Value"]
+
+    api_data_list = api_data_string.split(",")
+
+    cloud_name = api_data_list[0]
+    api_key = api_data_list[1]
+    api_secret = api_data_list[2]
 
     body = {
         "api_key": api_key,
-        "timestamp": int(time.time())
+        "timestamp": str(int(time.time()))
     }
     files = {
         "file": open(filename, "rb")
     }
-    timestamp = int(time.time())
+
     body["signature"] = create_signature(body, api_secret)
 
     url = f"https://api.cloudinary.com/v1_1/{cloud_name}/{resource_type}/upload"
-    res = requests.post(url, data=body, files=files)
+    res = requests.post(url, files=files, data=body)
     return res.json()
 
 
@@ -53,28 +81,55 @@ def create_mp3(text):
         TextType='text',
         VoiceId='Joanna'
     )
+    filename = "/tmp/obituary.mp3"
+    with open(filename, "wb") as f:
+        f.write(response["AudioStream"].read())
+    return post_cloudinary(filename, "raw")
 
 
 def create_signature(body, api_secret):
     exclude = ["api_key", "resource_type", "cloud_name"]
-    timestamp = int(time.time())
-    body["timestamp"] = timestamp
     sorted_body = sort_dict(body, exclude)
     query_string = create_query_string(sorted_body)
-    query_string_append = f"{query_string}{api_secret}"
-    hashed = hashlib.sha1(query_string_append.encode())
-    return hashed.hexdigest()
+    query_string = f"{query_string}{api_secret}"
+    hashed = hashlib.sha1(query_string.encode("utf-8")).hexdigest()
+    return hashed
 
 
 def sort_dict(dict, exclude):
     myKeys = list(dict.keys())
     myKeys.sort()
     for i in range(len(exclude)):
-        myKeys.remove(exclude[i])
+        if exclude[i] in myKeys:
+            myKeys.remove(exclude[i])
+
     return {i: dict[i] for i in myKeys}
 
 
 def create_query_string(dict):
     query_string = ""
     for ind, (key, value) in enumerate(dict.items()):
-        query_string = f"{key}{value}" if ind == 0 else f"{query_string}&{key}={value}"
+        query_string = f"{key}={value}" if ind == 0 else f"{query_string}&{key}={value}"
+    return query_string
+
+
+def write_obituary(name, birth_date, death_date):
+    api_key = boto3.client('ssm').get_parameter(
+        Name="OpenAIKey", WithDecryption=True)["Parameter"]["Value"]
+    url = "https://api.openai.com/v1/completions"
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}"
+    }
+
+    body = {
+        "model": "text-curie-001",
+        "prompt": f"write an obituary about a fictional character \
+            named {name} who was born on {birth_date} and died on {death_date}",
+        "max_tokens": 600,
+        "temperature": 0.1,
+    }
+
+    res = requests.post(url, headers=headers, json=body, timeout=15)
+    return res.json()
