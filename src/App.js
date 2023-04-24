@@ -10,6 +10,7 @@ function App() {
   const [obituaries, setObituaries] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCardCreated, setIsCardCreated] = useState(false);
 
   function openModal() {
     setShowModal(true);
@@ -28,6 +29,7 @@ function App() {
       }
     );
     getObituary();
+    setIsCardCreated(true);
   }
 
   async function getObituary() {
@@ -69,9 +71,10 @@ function App() {
             }}
             className="masonry-grid"
           >
-            {obituaries.map((obituaryItem) => (
+            {obituaries.map((obituaryItem, index) => (
               <div key={uuidv4()} className="card-parent">
                 <Obituary
+                  isCardOpen={isCardCreated && index === 0 ? true : false}
                   image={obituaryItem.image_url}
                   name={obituaryItem.name}
                   birth={obituaryItem.birth_date}

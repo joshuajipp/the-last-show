@@ -2,7 +2,7 @@ import AudioPlayer from "./AudioPlayer";
 import React from "react";
 
 function Obituary(props) {
-  const [isExpanded, setIsExpanded] = React.useState(false);
+  const [isExpanded, setIsExpanded] = React.useState(props.isCardOpen);
   const dateBirthString = props.birth.replace(/-/g, "/");
   const dateDeathString = props.death.replace(/-/g, "/");
   const birthDate = new Date(dateBirthString);
