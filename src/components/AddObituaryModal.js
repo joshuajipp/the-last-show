@@ -18,11 +18,15 @@ function AddObituaryModal(props) {
             name: name,
             birth_date: birth_date,
             death_date: death_date,
-           
         };
         setIsWriting(true);
         await props.onNew(obituaryObject);
+        props.closeModal();
         setIsWriting(false);
+        setName("");
+        setImage(null);
+        setBirth("");
+        setDeath("");
 
     }
     const onFileChange = (e) => {

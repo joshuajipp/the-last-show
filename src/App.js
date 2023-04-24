@@ -7,6 +7,7 @@ import { useState } from "react";
 function App() {
   const [obituaries, setObituaries] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   function openModal() {
     setShowModal(true);
@@ -36,10 +37,11 @@ function App() {
       }
     );
     const data = await res.json();
-
     setObituaries(data);
-    closeModal();
+    setIsLoading(false);
+    
   }
+
   useEffect(() => {
     getObituary();
   }, []);
@@ -55,7 +57,9 @@ function App() {
       <div className="home-page">
         <Header toggleModal={openModal} />
 
-        {obituaries.length > 0 ? (
+        {isLoading ? (
+          <div className="loader"></div>
+        ) : obituaries.length > 0 ? (
           <div className="obituary-container">
             {obituaries.map((obituaryItem) => (
               <div className="card-parent">
