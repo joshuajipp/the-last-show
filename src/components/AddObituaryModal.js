@@ -9,6 +9,10 @@ function AddObituaryModal(props) {
 
     const newObituary = async (e) => {
         e.preventDefault();
+        if(name == ""){
+            alert("Name field must be filled out");
+            return;
+        }
         const obituaryObject = {
             image: image,
             name: name,
@@ -19,7 +23,6 @@ function AddObituaryModal(props) {
         setIsWriting(true);
         await props.onNew(obituaryObject);
         setIsWriting(false);
-        
 
     }
     const onFileChange = (e) => {
@@ -46,18 +49,18 @@ function AddObituaryModal(props) {
                     <button className="close-button" onClick={props.closeModal}>{" "}X{" "}</button>
                     <form className = "modal-content">
                         <div className="title">
-                        <h2 className="add-title">Create a New Obituary</h2>
+                            <h2 className="add-title">Create a New Obituary</h2>
                         </div>
                         <div className="file-input">
                             <input type="file" required accept="images/*" onChange={(e)=>onFileChange(e)}/>
                         </div>
                         <div className="name-input">
-                        <input className = "name"
-                            required
-                            type = "text"
-                            value={name}
-                            onChange={(e)=> setName(e.target.value)}
-                            placeholder="Name of the deceased"
+                            <input className = "name"
+                                type = "text"
+                                value={name}
+                                onChange={(e)=> setName(e.target.value)}
+                                placeholder="Name of the deceased"
+                                required
                             />
                         </div>
                         <div className = "date-input">
