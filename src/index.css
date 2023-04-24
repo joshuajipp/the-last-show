@@ -36,8 +36,6 @@ nav {
 .menu-button {
   flex: 1;
   text-align: center;
-  padding-top:2%;
-  padding-bottom:2%;
 }
 .empty {
   flex: 1;
@@ -45,6 +43,9 @@ nav {
 .button {
   border: none;
   background-color: transparent;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  font-size: 18px;
 }
 
 .obituary {
@@ -161,19 +162,23 @@ img.squared {
   align-items: center;
   border: none;
   outline: none;
-  transition: 0.5s;
 }
 .audio-button:hover {
-  background-color: #737272;
+  background-color: #a6a6a6;
+  transition: 0.5s;
+}
+.menu-button:hover {
+  background-color: #a6a6a6;
+  transition: 0.5s;
 }
 
-.home-page{
+.home-page {
   height: 80vh;
 }
-.no-obituary{
+.no-obituary {
   height: 100%;
 }
-.no-obituary-text{
+.no-obituary-text {
   text-align: center;
   color: grey;
   font-weight: bolder;
