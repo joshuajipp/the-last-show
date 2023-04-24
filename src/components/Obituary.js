@@ -5,7 +5,6 @@ function Obituary(props) {
   const dateDeathString = props.death.replace(/-/g, "/");
   const birthDate = new Date(dateBirthString);
   const deathDate = new Date(dateDeathString);
-  console.log(birthDate);
 
   const monthNames = [
     "January",
