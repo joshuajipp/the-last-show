@@ -8,9 +8,11 @@ def handler(event, context):
     try:
         response = table.scan()
         items = response['Items']
+        sorted_items = sorted(
+            items, key=lambda x: x['process_datetime'], reverse=True)
         return {
             'statusCode': 200,
-            'body': items
+            'body': sorted_items
         }
     except Exception as e:
         print("Query failed: " + str(e))
