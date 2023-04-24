@@ -3,6 +3,8 @@ import Header from "./components/Header";
 import Obituary from "./components/Obituary";
 import AddObituaryModal from "./components/AddObituaryModal";
 import { useState } from "react";
+import Masonry from "react-masonry-css";
+import { v4 as uuidv4 } from "uuid";
 
 function App() {
   const [obituaries, setObituaries] = useState([]);
