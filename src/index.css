@@ -166,3 +166,17 @@ img.squared {
 .audio-button:hover {
   background-color: #737272;
 }
+
+.home-page{
+  height: 80vh;
+}
+.no-obituary{
+  height: 100%;
+}
+.no-obituary-text{
+  text-align: center;
+  color: grey;
+  font-weight: bolder;
+  font-size: larger;
+  padding-top: 10%;
+}
