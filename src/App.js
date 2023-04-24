@@ -41,7 +41,6 @@ function App() {
     const data = await res.json();
     setObituaries(data);
     setIsLoading(false);
-    
   }
 
   useEffect(() => {
@@ -62,9 +61,16 @@ function App() {
         {isLoading ? (
           <div className="loader"></div>
         ) : obituaries.length > 0 ? (
-          <div className="obituary-container">
+          <Masonry
+            breakpointCols={{
+              default: 3,
+              1100: 2,
+              700: 1,
+            }}
+            className="masonry-grid"
+          >
             {obituaries.map((obituaryItem) => (
-              <div className="card-parent">
+              <div key={uuidv4()} className="card-parent">
                 <Obituary
                   image={obituaryItem.image_url}
                   name={obituaryItem.name}
@@ -75,7 +81,7 @@ function App() {
                 />
               </div>
             ))}
-          </div>
+          </Masonry>
         ) : (
           <div className="no-obituary">
             <p className="no-obituary-text">No Obituaries Yet</p>
