@@ -47,13 +47,14 @@ function Obituary(props) {
           className="squared"
           onClick={toggleContent}
         />
-        <AudioPlayer audio={props.audio} />
+
         <div className="obituary-text">
           <p>{props.name}</p>
           <small>
             {formattedBirthDate} - {formattedDeathDate}
           </small>
           {isExpanded && <p className="content">{props.content}</p>}
+          {isExpanded && <AudioPlayer audio={props.audio} />}
         </div>
       </div>
     </div>
