@@ -74,6 +74,7 @@ nav {
   display: flex;
   align-items: center;
   justify-content: center;
+
 }
 
 .obituary-text {
@@ -84,6 +85,7 @@ img.squared {
   object-fit: cover;
   object-position: center;
   filter: grayscale(100%);
+
 }
 
 .obituary-page {
@@ -97,6 +99,7 @@ img.squared {
   opacity: 0.9;
   background-color: lightgrey;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
+  z-index: 1;
 }
 .close-button {
   border: none;
