@@ -82,7 +82,15 @@ function AddObituaryModal(props) {
                             />
                         </div>
                         <div className = "Obituary-button">
-                            <button onClick={newObituary} >{isWriting ? "Please Wait..." : "Write Obituary"}</button>
+                        <button
+                            className={`newObituary-button ${
+                            isWriting ? "disabled" : ""
+                            }`}
+                            onClick={newObituary}
+                            disabled={isWriting}
+                        >
+                            {isWriting ? "Please Wait..." : "Write Obituary"}
+                        </button>
                         </div>
                     </form>
                 </div>
