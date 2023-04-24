@@ -22,35 +22,36 @@ function App() {
       method: "POST",
       headers:{"Content-Type":"application/json"},
       body: JSON.stringify(newObituary)
+    });
+    getObituary();
+  }
+
+  async function getObituary(){
+    const res = await fetch ("https://jbuz7pyvhj4xta57aexulh3xry0dncjp.lambda-url.ca-central-1.on.aws/",
+    {
+      method: "GET",
+      headers: {"Content-Type":"application/json"},
     })
+    const data = await res.json();
+    console.log(data);
+    setObituaries(data);
   
   }
-  useEffect(()=>{
-    async function getObituaries(){
-      if (obituaries !== null){
-        await fetch ('https://jbuz7pyvhj4xta57aexulh3xry0dncjp.lambda-url.ca-central-1.on.aws/', {
-        method:"GET",
-        headers: {
-          "Content-Type": "application/json"
-        }
-    })
-      .then(response => response.json())
-      .then(data => setObituaries(data.items));
-      }
-    }
-    getObituaries();
-  },[obituaries]);
-
+  useEffect(()=> {
+    getObituary();
+  },[]);
+  
   return(
     <div>
       <Header toggleModal={openModal} />
       {obituaries.map((obituaryItem) => 
       <Obituary
-        image = {obituaryItem.image}
+        image = {obituaryItem.image_url}
         name = {obituaryItem.name}
         birth = {obituaryItem.birth_date}
         death = {obituaryItem.death_date}
-        content = {obituaryItem.content}
+        content = {obituaryItem.text}
+        audio = {obituaryItem.mp3_url}
         />
       )}
       <AddObituaryModal onNew ={newObituary} showModal={showModal} setShowModal= {setShowModal} closeModal={closeModal}/>
