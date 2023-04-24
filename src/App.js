@@ -20,7 +20,7 @@ function App() {
 
   async function newObituary(newObituary) {
     const res = await fetch(
-      "https://yjru7bpx6g7uk6utxa76m526re0gmwce.lambda-url.ca-central-1.on.aws/",
+      "https://gbabcf7lyvz3bdbpmghg2gr3oa0ucixr.lambda-url.ca-central-1.on.aws/",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -32,7 +32,7 @@ function App() {
 
   async function getObituary() {
     const res = await fetch(
-      "https://jbuz7pyvhj4xta57aexulh3xry0dncjp.lambda-url.ca-central-1.on.aws/",
+      "https://6k5ytemwyfv7y5eke6q3vxlon40rrlsl.lambda-url.ca-central-1.on.aws/",
       {
         method: "GET",
         headers: { "Content-Type": "application/json" },
