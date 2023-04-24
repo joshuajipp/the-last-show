@@ -1,6 +1,8 @@
 import AudioPlayer from "./AudioPlayer";
+import React from "react";
 
 function Obituary(props) {
+  const [isExpanded, setIsExpanded] = React.useState(false);
   const dateBirthString = props.birth.replace(/-/g, "/");
   const dateDeathString = props.death.replace(/-/g, "/");
   const birthDate = new Date(dateBirthString);
@@ -32,17 +34,26 @@ function Obituary(props) {
   const formattedBirthDate = `${monthNames[birthMonthIndex]} ${birthDay}, ${birthYear}`;
   const formattedDeathDate = `${monthNames[deathMonthIndex]} ${deathDay}, ${deathYear}`;
 
+  function toggleContent() {
+    setIsExpanded(!isExpanded);
+  }
+
   return (
     <div className="obituary">
       <div className="obituary-box">
-        <img src={props.image} alt={props.name} className="squared" />
+        <img
+          src={props.image}
+          alt={props.name}
+          className="squared"
+          onClick={toggleContent}
+        />
         <AudioPlayer audio={props.audio} />
         <div className="obituary-text">
           <p>{props.name}</p>
           <small>
             {formattedBirthDate} - {formattedDeathDate}
           </small>
-          <p className="content">{props.content}</p>
+          {isExpanded && <p className="content">{props.content}</p>}
         </div>
       </div>
     </div>

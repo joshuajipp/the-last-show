@@ -51,8 +51,8 @@ nav {
 .obituary {
   background: white;
   box-shadow: 0 2px 5px lightgray;
-  width: 250px;
-  height: 450px;
+  width: 350px;
+  /* height: 450px; */
   margin: 2%;
   float: left;
 }
@@ -83,8 +83,6 @@ nav {
 img.squared {
   object-fit: cover;
   object-position: center;
-  height: 225px;
-  width: 250px;
 }
 
 .obituary-page {
