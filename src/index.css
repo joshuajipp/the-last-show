@@ -187,3 +187,14 @@ img.squared {
   font-size: larger;
   padding-top: 10%;
 }
+
+.obituary-container {
+  display: grid;
+  grid-template-rows: auto auto;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+.card-parent {
+  display: flex;
+  justify-content: center;
+}
+
