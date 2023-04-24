@@ -33,9 +33,9 @@ function App() {
       headers: {"Content-Type":"application/json"},
     })
     const data = await res.json();
-    console.log(data);
-    setObituaries(data);
   
+    setObituaries(data);
+    closeModal();
   }
   useEffect(()=> {
     getObituary();
@@ -43,18 +43,25 @@ function App() {
   
   return(
     <div>
-      <Header toggleModal={openModal} />
-      {obituaries.map((obituaryItem) => 
-      <Obituary
-        image = {obituaryItem.image_url}
-        name = {obituaryItem.name}
-        birth = {obituaryItem.birth_date}
-        death = {obituaryItem.death_date}
-        content = {obituaryItem.text}
-        audio = {obituaryItem.mp3_url}
-        />
-      )}
       <AddObituaryModal onNew ={newObituary} showModal={showModal} setShowModal= {setShowModal} closeModal={closeModal}/>
+      <div className = "home-page">
+      <Header toggleModal={openModal} />
+      {obituaries.length > 0 ? obituaries.map((obituaryItem) => 
+        <Obituary
+          image = {obituaryItem.image_url}
+          name = {obituaryItem.name}
+          birth = {obituaryItem.birth_date}
+          death = {obituaryItem.death_date}
+          content = {obituaryItem.text}
+          audio = {obituaryItem.mp3_url}
+        />
+      ) : (
+        <div className ="no-obituary">
+          <p className = "no-obituary-text">No Obituaries Yet</p>
+        </div>
+      )}
+
+      </div>
     </div>
     
   )

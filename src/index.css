@@ -26,8 +26,6 @@ nav {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding-bottom: 2%;
-  padding-top: 2%;
   border-bottom: 1px solid black;
 }
 .header {
@@ -38,6 +36,8 @@ nav {
 .menu-button {
   flex: 1;
   text-align: center;
+  padding-top:2%;
+  padding-bottom:2%;
 }
 .empty {
   flex: 1;

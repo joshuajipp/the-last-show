@@ -1,13 +1,13 @@
 import {useState} from "react";
-import { v4 as uuidv4 } from "uuid";
 
 function AddObituaryModal(props) {
     const[name,setName] = useState("");
     const[birth_date, setBirth] = useState("");
     const[death_date, setDeath] = useState("");
     const[image,setImage] = useState(null);
+    const[isWriting, setIsWriting] = useState(false);
 
-    const newObituary= (e) => {
+    const newObituary = async (e) => {
         e.preventDefault();
         const obituaryObject = {
             image: image,
@@ -16,12 +16,11 @@ function AddObituaryModal(props) {
             death_date: death_date,
            
         };
-        props.onNew(obituaryObject);
- 
-        // const data = new FormData();
-        // data.append(file);
-        // data.append(name);
-        // data.append(when);
+        setIsWriting(true);
+        await props.onNew(obituaryObject);
+        setIsWriting(false);
+        
+
     }
     const onFileChange = (e) => {
         const selectedFile = e.target.files[0];
@@ -44,7 +43,7 @@ function AddObituaryModal(props) {
         <div>
             {props.showModal && (
                 <div className= "modal-container">
-                    <button className="close-button" onClick={props.closeModal}> X </button>
+                    <button className="close-button" onClick={props.closeModal}>{" "}X{" "}</button>
                     <form className = "modal-content">
                         <div className="title">
                         <h2 className="add-title">Create a New Obituary</h2>
@@ -76,7 +75,7 @@ function AddObituaryModal(props) {
                             />
                         </div>
                         <div className = "Obituary-button">
-                            <button onClick={newObituary} >Write Obituary</button>
+                            <button onClick={newObituary} >{isWriting ? "Please Wait..." : "Write Obituary"}</button>
                         </div>
                     </form>
                 </div>
