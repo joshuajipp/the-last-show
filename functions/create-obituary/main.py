@@ -4,6 +4,7 @@ import requests
 import base64
 import hashlib
 import json
+import datetime
 
 
 def handler(event, context):
@@ -22,13 +23,16 @@ def handler(event, context):
         generated_text = (write_obituary(
             body["name"], body["birth_date"], body["death_date"])["choices"][0]["text"]).replace("\n", "")
         mp3_url = create_mp3(generated_text)['secure_url']
+        current_date = datetime.datetime.now()
+        formatted_date = current_date.strftime("%Y-%m-%d-%H-%M-%S")
         items = {
             "image_url": image_url,
             "text": generated_text,
             "mp3_url": mp3_url,
             "name": body["name"],
             "birth_date": body["birth_date"],
-            "death_date": body["death_date"]
+            "death_date": body["death_date"],
+            "process_datetime": formatted_date
         }
         dynamodb = boto3.resource('dynamodb')
         table = dynamodb.Table('the-last-show-30160521')
